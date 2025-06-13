@@ -6,7 +6,7 @@ struct Libro {
     int id;
     char titulo[100];
     char autor[50];
-    int anio;
+    int aa;
     char estado[12]; // "Disponible" o "Prestado"
 };
 

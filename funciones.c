@@ -36,8 +36,8 @@ void registrarLibro(struct Libro libros[], int *total) {
 
     do {
         printf("Ingrese AA de publicacion (4 digitos): ");
-        if (scanf("%d", &libros[*total].anio) != 1 || libros[*total].anio < 1000 || libros[*total].anio > 9999) {
-            printf("Anio invalido. Intente nuevamente.\n");
+        if (scanf("%d", &libros[*total].aa) != 1 || libros[*total].aa < 1000 || libros[*total].aa > 9999) {
+            printf("Año invalido. Intente nuevamente.\n");
             fflush(stdin);
         } else {
             break;
@@ -57,32 +57,42 @@ void mostrarLibros(struct Libro libros[], int total) {
                libros[i].id,
                libros[i].titulo,
                libros[i].autor,
-               libros[i].anio,
+               libros[i].aa,
                libros[i].estado);
     }
 }
 
 void buscarLibro(struct Libro libros[], int total) {
+    if (total == 0) {
+        printf("\nNo hay libros registrados. Registre libros primero.\n");
+        return;
+    }
+
     int opcion;
     do {
-        printf("Buscar libro por:\n1. ID\n2. Titulo\nSeleccione una opcion: ");
+        printf("\nBuscar libro por:\n1. ID\n2. Titulo\nSeleccione una opcion: ");
         if (scanf("%d", &opcion) != 1) {
             fflush(stdin);
-            printf("Entrada invalida.\n");
+            printf("Entrada invalida. Intente de nuevo.\n");
             continue;
         }
 
         if (opcion == 1) {
             int id;
             printf("Ingrese ID del libro: ");
-            scanf("%d", &id);
+            if (scanf("%d", &id) != 1) {
+                fflush(stdin);
+                printf("ID invalido.\n");
+                return;
+            }
+
             for (int i = 0; i < total; i++) {
                 if (libros[i].id == id) {
-                    printf("Libro encontrado:\n");
+                    printf("\nLibro encontrado:\n");
                     printf("Titulo: %s\nAutor: %s\nAA: %d\nEstado: %s\n",
                            libros[i].titulo,
                            libros[i].autor,
-                           libros[i].anio,
+                           libros[i].aa,
                            libros[i].estado);
                     return;
                 }
@@ -99,17 +109,18 @@ void buscarLibro(struct Libro libros[], int total) {
 
             for (int i = 0; i < total; i++) {
                 if (strcmp(libros[i].titulo, titulo) == 0) {
-                    printf("Libro encontrado:\n");
-                    printf("ID: %d\nAutor: %s\nAnio: %d\nEstado: %s\n",
+                    printf("\nLibro encontrado:\n");
+                    printf("ID: %d\nAutor: %s\nAA: %d\nEstado: %s\n",
                            libros[i].id,
                            libros[i].autor,
-                           libros[i].anio,
+                           libros[i].aa,
                            libros[i].estado);
                     return;
                 }
             }
             printf("No se encontro libro con ese titulo.\n");
             return;
+
         } else {
             printf("Opcion invalida. Intente de nuevo.\n");
         }
