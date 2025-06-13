@@ -1,35 +1,50 @@
+#include <stdio.h>
 #include "funciones.h"
+
+int menu() {
+    int opc;
+    printf("\n=== MENU BIBLIOTECA ===\n");
+    printf("1. Registrar libro\n");
+    printf("2. Mostrar libros\n");
+    printf("3. Buscar libro\n");
+    printf("4. Actualizar estado\n");
+    printf("5. Eliminar libro\n");
+    printf("6. Salir\n");
+    printf("Seleccione una opcion: ");
+    scanf("%d", &opc);
+    return opc;
+}
 
 int main() {
     struct Libro libros[10];
-    int totalLibros = 0;
-    int opcion;
+    int total = 0;
+    int opc;
 
     do {
-        opcion = menu();
-        switch (opcion) {
+        opc = menu();
+        switch (opc) {
             case 1:
-                registrarLibro(libros, &totalLibros);
+                registrarLibro(libros, &total);
                 break;
             case 2:
-                mostrarLibros(libros, totalLibros);
+                mostrarLibros(libros, total);
                 break;
             case 3:
-                buscarLibro(libros, totalLibros);
+                buscarLibro(libros, total);
                 break;
             case 4:
-                actualizarEstado(libros, totalLibros);
+                actualizarEstado(libros, total);
                 break;
             case 5:
-                eliminarLibro(libros, &totalLibros);
+                eliminarLibro(libros, &total);
                 break;
             case 6:
-                printf("Saliendo del sistema...\n");
+                printf("Saliendo del programa...\n");
                 break;
             default:
-                printf("Opción inválida.\n");
+                printf("Opcion invalida. Intente nuevamente.\n");
         }
-    } while (opcion != 6);
+    } while (opc != 6);
 
     return 0;
 }

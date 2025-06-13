@@ -1,125 +1,125 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
 #include "funciones.h"
-
-int menu() {
-    int opcion;
-    printf("\n--- MENU BIBLIOTECA ---\n");
-    printf("1. Registrar libro\n");
-    printf("2. Mostrar libros\n");
-    printf("3. Buscar libro por ID o titulo\n");
-    printf("4. Actualizar estado del libro\n");
-    printf("5. Eliminar libro\n");
-    printf("6. Salir\n");
-    printf("Seleccione una opcion: ");
-    scanf("%d", &opcion);
-    getchar();
-    return opcion;
-}
 
 void registrarLibro(struct Libro libros[], int *total) {
     if (*total >= 10) {
-        printf("No se pueden registrar más libros.\n");
+        printf("No se pueden registrar mas de 10 libros.\n");
         return;
     }
 
-    int idDuplicado = 0;
-    printf("\n--- Registrar Libro ---\n");
-    printf("ID (entero): ");
-    scanf("%d", &libros[*total].id);
-    getchar();
+    int id;
+    printf("Ingrese ID del libro: ");
+    while (scanf("%d", &id) != 1) {
+        printf("Entrada invalida. Ingrese un numero entero para el ID: ");
+        fflush(stdin);
+    }
 
     for (int i = 0; i < *total; i++) {
-        if (libros[i].id == libros[*total].id) {
-            idDuplicado = 1;
-            break;
+        if (libros[i].id == id) {
+            printf("Ya existe un libro con ese ID.\n");
+            return;
         }
     }
 
-    if (idDuplicado) {
-        printf("El ID ya está registrado. Intente con otro.\n");
-        return;
-    }
+    libros[*total].id = id;
+    fflush(stdin);
 
-    printf("Título: ");
+    printf("Ingrese titulo del libro: ");
     fgets(libros[*total].titulo, 100, stdin);
-    libros[*total].titulo[strcspn(libros[*total].titulo, "\n")] = 0;
+    libros[*total].titulo[strcspn(libros[*total].titulo, "\n")] = '\0';
 
-    printf("Autor: ");
+    printf("Ingrese autor del libro: ");
     fgets(libros[*total].autor, 50, stdin);
-    libros[*total].autor[strcspn(libros[*total].autor, "\n")] = 0;
+    libros[*total].autor[strcspn(libros[*total].autor, "\n")] = '\0';
 
-    printf("Año de publicación: ");
-    scanf("%d", &libros[*total].anio);
-    getchar();
+    do {
+        printf("Ingrese AA de publicacion (4 digitos): ");
+        if (scanf("%d", &libros[*total].anio) != 1 || libros[*total].anio < 1000 || libros[*total].anio > 9999) {
+            printf("Anio invalido. Intente nuevamente.\n");
+            fflush(stdin);
+        } else {
+            break;
+        }
+    } while (1);
 
     strcpy(libros[*total].estado, "Disponible");
     (*total)++;
-    printf("Libro registrado con éxito.\n");
+    printf("Libro registrado exitosamente.\n");
 }
 
 void mostrarLibros(struct Libro libros[], int total) {
-    if (total == 0) {
-        printf("No hay libros registrados.\n");
-        return;
-    }
-
-    printf("\n%-5s | %-30s | %-20s | %-4s | %-10s\n", "ID", "Título", "Autor", "Año", "Estado");
+    printf("\n%-5s | %-30s | %-20s | %-4s | %-10s\n", "ID", "Titulo", "Autor", "AA", "Estado");
     printf("--------------------------------------------------------------------------\n");
-
     for (int i = 0; i < total; i++) {
         printf("%-5d | %-30s | %-20s | %-4d | %-10s\n",
-            libros[i].id,
-            libros[i].titulo,
-            libros[i].autor,
-            libros[i].anio,
-            libros[i].estado);
+               libros[i].id,
+               libros[i].titulo,
+               libros[i].autor,
+               libros[i].anio,
+               libros[i].estado);
     }
 }
 
 void buscarLibro(struct Libro libros[], int total) {
-    int idBuscar;
-    char tituloBuscar[100];
     int opcion;
-
-    printf("\n1. Buscar por ID\n2. Buscar por título\nSeleccione: ");
-    scanf("%d", &opcion);
-    getchar();
-
-    if (opcion == 1) {
-        printf("Ingrese el ID: ");
-        scanf("%d", &idBuscar);
-        getchar();
-        for (int i = 0; i < total; i++) {
-            if (libros[i].id == idBuscar) {
-                printf("\nLibro encontrado:\nID: %d\nTítulo: %s\nAutor: %s\nAño: %d\nEstado: %s\n",
-                    libros[i].id, libros[i].titulo, libros[i].autor, libros[i].anio, libros[i].estado);
-                return;
-            }
+    do {
+        printf("Buscar libro por:\n1. ID\n2. Titulo\nSeleccione una opcion: ");
+        if (scanf("%d", &opcion) != 1) {
+            fflush(stdin);
+            printf("Entrada invalida.\n");
+            continue;
         }
-    } else if (opcion == 2) {
-        printf("Ingrese el título: ");
-        fgets(tituloBuscar, 100, stdin);
-        tituloBuscar[strcspn(tituloBuscar, "\n")] = 0;
-        for (int i = 0; i < total; i++) {
-            if (strcmp(libros[i].titulo, tituloBuscar) == 0) {
-                printf("\nLibro encontrado:\nID: %d\nTítulo: %s\nAutor: %s\nAño: %d\nEstado: %s\n",
-                    libros[i].id, libros[i].titulo, libros[i].autor, libros[i].anio, libros[i].estado);
-                return;
-            }
-        }
-    } else {
-        printf("Opción inválida.\n");
-        return;
-    }
 
-    printf("Libro no encontrado.\n");
+        if (opcion == 1) {
+            int id;
+            printf("Ingrese ID del libro: ");
+            scanf("%d", &id);
+            for (int i = 0; i < total; i++) {
+                if (libros[i].id == id) {
+                    printf("Libro encontrado:\n");
+                    printf("Titulo: %s\nAutor: %s\nAA: %d\nEstado: %s\n",
+                           libros[i].titulo,
+                           libros[i].autor,
+                           libros[i].anio,
+                           libros[i].estado);
+                    return;
+                }
+            }
+            printf("No se encontro libro con ese ID.\n");
+            return;
+
+        } else if (opcion == 2) {
+            char titulo[100];
+            fflush(stdin);
+            printf("Ingrese titulo: ");
+            fgets(titulo, 100, stdin);
+            titulo[strcspn(titulo, "\n")] = '\0';
+
+            for (int i = 0; i < total; i++) {
+                if (strcmp(libros[i].titulo, titulo) == 0) {
+                    printf("Libro encontrado:\n");
+                    printf("ID: %d\nAutor: %s\nAnio: %d\nEstado: %s\n",
+                           libros[i].id,
+                           libros[i].autor,
+                           libros[i].anio,
+                           libros[i].estado);
+                    return;
+                }
+            }
+            printf("No se encontro libro con ese titulo.\n");
+            return;
+        } else {
+            printf("Opcion invalida. Intente de nuevo.\n");
+        }
+    } while (1);
 }
 
 void actualizarEstado(struct Libro libros[], int total) {
     int id;
-    printf("\nIngrese el ID del libro: ");
+    printf("Ingrese ID del libro a actualizar: ");
     scanf("%d", &id);
-    getchar();
-
     for (int i = 0; i < total; i++) {
         if (libros[i].id == id) {
             if (strcmp(libros[i].estado, "Disponible") == 0) {
@@ -127,19 +127,17 @@ void actualizarEstado(struct Libro libros[], int total) {
             } else {
                 strcpy(libros[i].estado, "Disponible");
             }
-            printf("Estado actualizado a '%s'.\n", libros[i].estado);
+            printf("Estado actualizado a: %s\n", libros[i].estado);
             return;
         }
     }
-
     printf("Libro no encontrado.\n");
 }
 
 void eliminarLibro(struct Libro libros[], int *total) {
     int id;
-    printf("\nIngrese el ID del libro a eliminar: ");
+    printf("Ingrese ID del libro a eliminar: ");
     scanf("%d", &id);
-    getchar();
 
     for (int i = 0; i < *total; i++) {
         if (libros[i].id == id) {
@@ -151,6 +149,5 @@ void eliminarLibro(struct Libro libros[], int *total) {
             return;
         }
     }
-
     printf("Libro no encontrado.\n");
 }
